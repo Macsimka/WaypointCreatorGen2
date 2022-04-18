@@ -97,8 +97,8 @@ namespace WaypointCreatorGen2
             // 
             this.TabControl.Controls.Add(this.tabPage1);
             this.TabControl.Controls.Add(this.tabPage2);
-            this.TabControl.Location = new System.Drawing.Point(16, 15);
-            this.TabControl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.TabControl.Location = new System.Drawing.Point(10, 10);
+            this.TabControl.Margin = new System.Windows.Forms.Padding(4);
             this.TabControl.Name = "TabControl";
             this.TabControl.SelectedIndex = 0;
             this.TabControl.Size = new System.Drawing.Size(1747, 693);
@@ -111,9 +111,9 @@ namespace WaypointCreatorGen2
             this.tabPage1.Controls.Add(this.groupBox1);
             this.tabPage1.Controls.Add(this.EditorToolStrip);
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
             this.tabPage1.Size = new System.Drawing.Size(1739, 664);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Editor";
@@ -124,9 +124,9 @@ namespace WaypointCreatorGen2
             this.groupBox3.Controls.Add(this.SplineGridView);
             this.groupBox3.Controls.Add(this.EditorGridView);
             this.groupBox3.Location = new System.Drawing.Point(968, 38);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox3.Size = new System.Drawing.Size(760, 615);
             this.groupBox3.TabIndex = 4;
             this.groupBox3.TabStop = false;
@@ -149,7 +149,7 @@ namespace WaypointCreatorGen2
             this.SplineGridViewTextBoxColumn5});
             this.SplineGridView.ContextMenuStrip = this.GridViewContextMenuStrip;
             this.SplineGridView.Location = new System.Drawing.Point(9, 308);
-            this.SplineGridView.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SplineGridView.Margin = new System.Windows.Forms.Padding(4);
             this.SplineGridView.Name = "SplineGridView";
             this.SplineGridView.RowHeadersWidth = 51;
             this.SplineGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
@@ -165,7 +165,7 @@ namespace WaypointCreatorGen2
             this.SplineGridViewTextBoxColumn1.Name = "SplineGridViewTextBoxColumn1";
             this.SplineGridViewTextBoxColumn1.ReadOnly = true;
             this.SplineGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
-            this.SplineGridViewTextBoxColumn1.Width = 50;
+            this.SplineGridViewTextBoxColumn1.Width = 60;
             // 
             // SplineGridViewTextBoxColumn2
             // 
@@ -174,6 +174,7 @@ namespace WaypointCreatorGen2
             this.SplineGridViewTextBoxColumn2.Name = "SplineGridViewTextBoxColumn2";
             this.SplineGridViewTextBoxColumn2.ReadOnly = true;
             this.SplineGridViewTextBoxColumn2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Programmatic;
+            this.SplineGridViewTextBoxColumn2.Width = 120;
             // 
             // SplineGridViewTextBoxColumn3
             // 
@@ -274,7 +275,7 @@ namespace WaypointCreatorGen2
             this.Delay});
             this.EditorGridView.ContextMenuStrip = this.GridViewContextMenuStrip;
             this.EditorGridView.Location = new System.Drawing.Point(9, 17);
-            this.EditorGridView.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.EditorGridView.Margin = new System.Windows.Forms.Padding(4);
             this.EditorGridView.Name = "EditorGridView";
             this.EditorGridView.RowHeadersWidth = 51;
             this.EditorGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
@@ -358,9 +359,9 @@ namespace WaypointCreatorGen2
             // 
             this.groupBox2.Controls.Add(this.EditorListBox);
             this.groupBox2.Location = new System.Drawing.Point(684, 38);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox2.Size = new System.Drawing.Size(276, 615);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
@@ -371,7 +372,7 @@ namespace WaypointCreatorGen2
             this.EditorListBox.FormattingEnabled = true;
             this.EditorListBox.ItemHeight = 16;
             this.EditorListBox.Location = new System.Drawing.Point(9, 17);
-            this.EditorListBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.EditorListBox.Margin = new System.Windows.Forms.Padding(4);
             this.EditorListBox.Name = "EditorListBox";
             this.EditorListBox.Size = new System.Drawing.Size(257, 580);
             this.EditorListBox.TabIndex = 0;
@@ -381,9 +382,9 @@ namespace WaypointCreatorGen2
             // 
             this.groupBox1.Controls.Add(this.EditorWaypointChart);
             this.groupBox1.Location = new System.Drawing.Point(20, 38);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox1.Size = new System.Drawing.Size(656, 615);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
@@ -391,7 +392,9 @@ namespace WaypointCreatorGen2
             // 
             // EditorWaypointChart
             // 
-            this.EditorWaypointChart.BorderlineColor = System.Drawing.Color.Black;
+            this.EditorWaypointChart.BorderlineWidth = 0;
+            this.EditorWaypointChart.BorderSkin.BackColor = System.Drawing.Color.Transparent;
+            this.EditorWaypointChart.BorderSkin.BorderColor = System.Drawing.Color.Transparent;
             chartArea1.AlignmentOrientation = ((System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations)((System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations.Vertical | System.Windows.Forms.DataVisualization.Charting.AreaAlignmentOrientations.Horizontal)));
             chartArea1.AxisX.IsStartedFromZero = false;
             chartArea1.AxisX.LabelStyle.Enabled = false;
@@ -449,9 +452,8 @@ namespace WaypointCreatorGen2
             legend1.Name = "Legend1";
             this.EditorWaypointChart.Legends.Add(legend1);
             this.EditorWaypointChart.Location = new System.Drawing.Point(8, 17);
-            this.EditorWaypointChart.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.EditorWaypointChart.Margin = new System.Windows.Forms.Padding(4);
             this.EditorWaypointChart.Name = "EditorWaypointChart";
-            this.EditorWaypointChart.Palette = System.Windows.Forms.DataVisualization.Charting.ChartColorPalette.None;
             series1.ChartArea = "ChartArea1";
             series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
             series1.Legend = "Legend1";
@@ -541,9 +543,9 @@ namespace WaypointCreatorGen2
             this.tabPage2.Controls.Add(this.SQLOutputTextBox);
             this.tabPage2.Controls.Add(this.SQLOutputToolStrip);
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
-            this.tabPage2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
             this.tabPage2.Size = new System.Drawing.Size(1739, 664);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "SQL Output";
@@ -551,12 +553,12 @@ namespace WaypointCreatorGen2
             // 
             // SQLOutputTextBox
             // 
-            this.SQLOutputTextBox.Font = new System.Drawing.Font("Lucida Console", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SQLOutputTextBox.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.SQLOutputTextBox.Location = new System.Drawing.Point(8, 38);
-            this.SQLOutputTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SQLOutputTextBox.Margin = new System.Windows.Forms.Padding(4);
             this.SQLOutputTextBox.Multiline = true;
             this.SQLOutputTextBox.Name = "SQLOutputTextBox";
-            this.SQLOutputTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.SQLOutputTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.SQLOutputTextBox.Size = new System.Drawing.Size(1715, 614);
             this.SQLOutputTextBox.TabIndex = 1;
             // 
@@ -567,7 +569,7 @@ namespace WaypointCreatorGen2
             this.SQLOutputSaveButton});
             this.SQLOutputToolStrip.Location = new System.Drawing.Point(4, 4);
             this.SQLOutputToolStrip.Name = "SQLOutputToolStrip";
-            this.SQLOutputToolStrip.Size = new System.Drawing.Size(1731, 27);
+            this.SQLOutputToolStrip.Size = new System.Drawing.Size(1731, 31);
             this.SQLOutputToolStrip.TabIndex = 0;
             this.SQLOutputToolStrip.Text = "toolStrip1";
             // 
@@ -576,7 +578,7 @@ namespace WaypointCreatorGen2
             this.SQLOutputSaveButton.Image = global::WaypointCreatorGen2.Properties.Resources.PIC_Write;
             this.SQLOutputSaveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.SQLOutputSaveButton.Name = "SQLOutputSaveButton";
-            this.SQLOutputSaveButton.Size = new System.Drawing.Size(139, 24);
+            this.SQLOutputSaveButton.Size = new System.Drawing.Size(139, 28);
             this.SQLOutputSaveButton.Text = "Save as SQL File";
             this.SQLOutputSaveButton.Click += new System.EventHandler(this.SQLOutputSaveButton_Click);
             // 
@@ -587,7 +589,7 @@ namespace WaypointCreatorGen2
             this.ClientSize = new System.Drawing.Size(1779, 721);
             this.Controls.Add(this.TabControl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "WaypointCreator";
             this.Text = "Waypoint Creator Gen2";
             this.Load += new System.EventHandler(this.WaypointCreator_Load);
@@ -621,7 +623,6 @@ namespace WaypointCreatorGen2
         private System.Windows.Forms.TextBox SQLOutputTextBox;
         private System.Windows.Forms.ToolStrip EditorToolStrip;
         private System.Windows.Forms.ToolStripButton EditorImportSniffButton;
-        private System.Windows.Forms.DataVisualization.Charting.Chart EditorWaypointChart;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
@@ -651,6 +652,7 @@ namespace WaypointCreatorGen2
         private System.Windows.Forms.DataGridViewTextBoxColumn SplineGridViewTextBoxColumn3;
         private System.Windows.Forms.DataGridViewTextBoxColumn SplineGridViewTextBoxColumn4;
         private System.Windows.Forms.DataGridViewTextBoxColumn SplineGridViewTextBoxColumn5;
+        internal System.Windows.Forms.DataVisualization.Charting.Chart EditorWaypointChart;
     }
 }
 
