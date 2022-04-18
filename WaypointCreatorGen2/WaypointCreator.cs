@@ -10,7 +10,7 @@ namespace WaypointCreatorGen2
     public partial class WaypointCreator : Form
     {
         // Dictionary<UInt32 /*CreatureID*/, Dictionary<UInt64 /*lowGUID*/, List<WaypointInfo>>>
-        Dictionary<UInt32, Dictionary<UInt64, List<WaypointInfo>>> WaypointDatabyCreatureEntry = new Dictionary<UInt32, Dictionary<UInt64, List<WaypointInfo>>>();
+        Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>> WaypointDatabyCreatureEntry = new Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>>();
 
         DataGridViewRow[] CopiedDataGridRows;
 
@@ -44,7 +44,7 @@ namespace WaypointCreatorGen2
                 GridViewContextMenuStrip.Enabled = false;
                 EditorLoadingLabel.Text = "Loading [" + Path.GetFileName(dialog.FileName) + "]...";
 
-                WaypointDatabyCreatureEntry = await Task.Run(()=> GetWaypointDataFromSniff(dialog.FileName));
+                WaypointDatabyCreatureEntry = await Task.Run(() => GetWaypointDataFromSniff(dialog.FileName));
 
                 EditorImportSniffButton.Enabled = true;
                 EditorFilterEntryButton.Enabled = true;
@@ -54,9 +54,9 @@ namespace WaypointCreatorGen2
         }
 
         // Parses all waypoint data from the provided file and returns a container filled with all needed data
-        private Dictionary<UInt32, Dictionary<UInt64, List<WaypointInfo>>> GetWaypointDataFromSniff(String filePath)
+        private Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>> GetWaypointDataFromSniff(string filePath)
         {
-            Dictionary<UInt32, Dictionary<UInt64, List<WaypointInfo>>> result = new Dictionary<UInt32, Dictionary<UInt64, List<WaypointInfo>>>();
+            Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>> result = new Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>>();
 
             using (System.IO.StreamReader file = new System.IO.StreamReader(filePath))
             {
@@ -66,8 +66,8 @@ namespace WaypointCreatorGen2
                     if (line.Contains("SMSG_ON_MONSTER_MOVE") || line.Contains("SMSG_ON_MONSTER_MOVE_TRANSPORT"))
                     {
                         WaypointInfo wpInfo = new WaypointInfo();
-                        UInt32 creatureId = 0;
-                        UInt64 lowGuid = 0;
+                        uint creatureId = 0;
+                        ulong lowGuid = 0;
 
                         // Extracting the packet timestamp in milliseconds from the packet header for delay calculations
                         string[] packetHeader = line.Split(new char[] { ' ' });
@@ -75,7 +75,7 @@ namespace WaypointCreatorGen2
                         {
                             if (packetHeader[i].Contains("Time:"))
                             {
-                                wpInfo.TimeStamp = UInt32.Parse(TimeSpan.Parse(packetHeader[i + 2]).TotalMilliseconds.ToString());
+                                wpInfo.TimeStamp = uint.Parse(TimeSpan.Parse(packetHeader[i + 2]).TotalMilliseconds.ToString());
                                 break;
                             }
                         }
@@ -94,9 +94,9 @@ namespace WaypointCreatorGen2
                                 for (int i = 0; i < words.Length; ++i)
                                 {
                                     if (words[i].Contains("Entry:"))
-                                        creatureId = UInt32.Parse(words[i + 1]);
+                                        creatureId = uint.Parse(words[i + 1]);
                                     else if (words[i].Contains("Low:"))
-                                        lowGuid = UInt64.Parse(words[i + 1]);
+                                        lowGuid = ulong.Parse(words[i + 1]);
                                 }
 
                                 // Skip invalid data.
@@ -110,7 +110,7 @@ namespace WaypointCreatorGen2
                                 string[] words = line.Split(new char[] { ' ' });
                                 for (int i = 0; i < words.Length; ++i)
                                     if (words[i].Contains("MoveTime:"))
-                                        wpInfo.MoveTime = UInt32.Parse(words[i + 1]);
+                                        wpInfo.MoveTime = uint.Parse(words[i + 1]);
                             }
 
                             // Extract Facing Angles
@@ -142,15 +142,15 @@ namespace WaypointCreatorGen2
                                     if (result[creatureId][lowGuid].Count != 0)
                                     {
                                         int index = result[creatureId][lowGuid].Count - 1;
-                                        Int64 timeDiff = wpInfo.TimeStamp - result[creatureId][lowGuid][index].TimeStamp;
-                                        UInt32 oldMoveTime = result[creatureId][lowGuid][index].MoveTime;
+                                        long timeDiff = wpInfo.TimeStamp - result[creatureId][lowGuid][index].TimeStamp;
+                                        uint oldMoveTime = result[creatureId][lowGuid][index].MoveTime;
                                         result[creatureId][lowGuid][index].Delay = Convert.ToInt32(timeDiff - oldMoveTime);
                                     }
                                 }
 
                                 // Everything gathered, time to store the data
                                 if (!result.ContainsKey(creatureId))
-                                    result.Add(creatureId, new Dictionary<UInt64, List<WaypointInfo>>());
+                                    result.Add(creatureId, new Dictionary<ulong, List<WaypointInfo>>());
 
                                 if (!result[creatureId].ContainsKey(lowGuid))
                                     result[creatureId].Add(lowGuid, new List<WaypointInfo>());
@@ -183,25 +183,25 @@ namespace WaypointCreatorGen2
             return result;
         }
 
-        private void ListEntries(UInt32 creatureId)
+        private void ListEntries(uint creatureId)
         {
             EditorListBox.Items.Clear();
 
             if (creatureId == 0)
             {
-                foreach (var waypointsByEntry in WaypointDatabyCreatureEntry)
-                    foreach (var waypointsByGuid in waypointsByEntry.Value)
+                foreach (KeyValuePair<uint, Dictionary<ulong, List<WaypointInfo>>> waypointsByEntry in WaypointDatabyCreatureEntry)
+                    foreach (KeyValuePair<ulong, List<WaypointInfo>> waypointsByGuid in waypointsByEntry.Value)
                         EditorListBox.Items.Add(waypointsByEntry.Key.ToString() + " (" + waypointsByGuid.Key.ToString() + ")");
             }
             else
             {
                 if (WaypointDatabyCreatureEntry.ContainsKey(creatureId))
-                    foreach (var waypointsByGuid in WaypointDatabyCreatureEntry[creatureId])
+                    foreach (KeyValuePair<ulong, List<WaypointInfo>> waypointsByGuid in WaypointDatabyCreatureEntry[creatureId])
                         EditorListBox.Items.Add(creatureId.ToString() + " (" + waypointsByGuid.Key.ToString() + ")");
             }
         }
 
-        private void ShowWaypointDataForCreature(UInt32 creatureId, UInt64 lowGUID)
+        private void ShowWaypointDataForCreature(uint creatureId, ulong lowGUID)
         {
             // Filling the GridView
             EditorGridView.Rows.Clear();
@@ -270,8 +270,7 @@ namespace WaypointCreatorGen2
         // Filters the ListBox entries by CreatureID
         private void EditorFilterEntryButton_Click(object sender, EventArgs e)
         {
-            UInt32 creatureId = 0;
-            UInt32.TryParse(EditorFilterEntryTextBox.Text, out creatureId);
+            uint.TryParse(EditorFilterEntryTextBox.Text, out uint creatureId);
             ListEntries(creatureId);
         }
 
@@ -282,8 +281,8 @@ namespace WaypointCreatorGen2
 
             string[] words = EditorListBox.SelectedItem.ToString().Replace("(", "").Replace(")", "").Split(new char[] { ' ' });
 
-            UInt32 creatureId = UInt32.Parse(words[0]);
-            UInt64 lowGuid = UInt64.Parse(words[1]);
+            uint creatureId = uint.Parse(words[0]);
+            ulong lowGuid = ulong.Parse(words[1]);
             ShowWaypointDataForCreature(creatureId, lowGuid);
         }
 
@@ -334,7 +333,7 @@ namespace WaypointCreatorGen2
             if (CopiedDataGridRows == null || CopiedDataGridRows.Length == 0 || EditorGridView.SelectedRows.Count == 0)
                 return;
 
-            int index = aboveSelection ? EditorGridView.SelectedRows[0].Index: EditorGridView.SelectedRows[EditorGridView.SelectedRows.Count - 1].Index + 1;
+            int index = aboveSelection ? EditorGridView.SelectedRows[0].Index : EditorGridView.SelectedRows[EditorGridView.SelectedRows.Count - 1].Index + 1;
 
             DataGridViewRow[] rowsCopy = new DataGridViewRow[EditorGridView.Rows.Count];
             EditorGridView.Rows.CopyTo(rowsCopy, 0);
@@ -387,7 +386,7 @@ namespace WaypointCreatorGen2
             SQLOutputTextBox.AppendText("SET @PATH := @CGUID * 10;\r\n");
             SQLOutputTextBox.AppendText("DELETE FROM `waypoint_data` WHERE `id`= @PATH;\r\n");
             SQLOutputTextBox.AppendText("INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `delay`) VALUES\r\n");
-            
+
             int rowCount = 0;
             DataGridViewRow firstRow = null;
             foreach (DataGridViewRow row in EditorGridView.Rows)
@@ -449,14 +448,23 @@ namespace WaypointCreatorGen2
             if (dialog.ShowDialog() == DialogResult.OK)
                 File.WriteAllText(dialog.FileName, SQLOutputTextBox.Text, System.Text.Encoding.UTF8);
         }
+
+        private void EditorFilterEntryTextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter)
+                return;
+
+            uint.TryParse(EditorFilterEntryTextBox.Text, out uint creatureId);
+            ListEntries(creatureId);
+        }
     }
 
     public class WaypointInfo
     {
-        public UInt32 TimeStamp = 0;
+        public uint TimeStamp = 0;
         public WaypointPosition Position = new WaypointPosition();
-        public UInt32 MoveTime = 0;
-        public Int32 Delay = 0;
+        public uint MoveTime = 0;
+        public int Delay = 0;
         public List<SplinePosition> SplineList = new List<SplinePosition>();
     }
 
