@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -13,6 +14,7 @@ namespace WaypointCreatorGen2
         Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>> WaypointDatabyCreatureEntry = new Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>>();
 
         DataGridViewRow[] CopiedDataGridRows;
+        List<WaypointInfo> CurrentWaypoints;
 
 
         public WaypointCreator()
@@ -175,7 +177,7 @@ namespace WaypointCreatorGen2
                                 wpInfo.SplineList.Add(splinePosition);
                             }
                         }
-                        while ((line = file.ReadLine()) != "");
+                        while ((line = file.ReadLine()) != string.Empty);
                     }
                 }
             }
@@ -203,17 +205,26 @@ namespace WaypointCreatorGen2
 
         private void ShowWaypointDataForCreature(uint creatureId, ulong lowGUID)
         {
+            if (!WaypointDatabyCreatureEntry.ContainsKey(creatureId))
+                return;
+
+            CurrentWaypoints = WaypointDatabyCreatureEntry[creatureId].ContainsKey(lowGUID)
+                ? WaypointDatabyCreatureEntry[creatureId][lowGUID].ToList() // copy waypoint container
+                : null;
+
+            ShowWaypointDatas();
+        }
+
+        void ShowWaypointDatas()
+        {
             // Filling the GridView
             EditorGridView.Rows.Clear();
             SplineGridView.Rows.Clear();
 
-            if (!WaypointDatabyCreatureEntry.ContainsKey(creatureId))
-                return;
-
-            if (WaypointDatabyCreatureEntry[creatureId].ContainsKey(lowGUID))
+            if (CurrentWaypoints != null)
             {
                 int count = 0;
-                foreach (WaypointInfo wpInfo in WaypointDatabyCreatureEntry[creatureId][lowGUID])
+                foreach (WaypointInfo wpInfo in CurrentWaypoints)
                 {
                     int splineCount = 0;
                     string orientation = "NULL";
@@ -248,6 +259,7 @@ namespace WaypointCreatorGen2
             BuildGraphPath();
             GridViewContextMenuStrip.Enabled = true;
         }
+
         private void BuildGraphPath()
         {
             EditorWaypointChart.ChartAreas[0].AxisX.ScaleView.ZoomReset();
@@ -295,18 +307,11 @@ namespace WaypointCreatorGen2
             EditorGridView.SelectedRows.CopyTo(CopiedDataGridRows, 0);
 
             foreach (DataGridViewRow row in EditorGridView.SelectedRows)
-                EditorGridView.Rows.Remove(row);
-
-            // Update the row count field
-            int count = 0;
-            foreach (DataGridViewRow row in EditorGridView.Rows)
             {
-                row.Cells[0].Value = count;
-                ++count;
+                CurrentWaypoints.RemoveAt(row.Index);
             }
 
-            // GriwView is updated, rebuild the graph path.
-            BuildGraphPath();
+            ShowWaypointDatas();
         }
 
         private void CopyStripMenuItem_Click(object sender, EventArgs e)
@@ -383,10 +388,10 @@ namespace WaypointCreatorGen2
             // Generates the SQL output.
             // waypoint_data
             SQLOutputTextBox.Clear();
-            SQLOutputTextBox.AppendText("SET @CGUID := xxxxxx;\r\n");
-            SQLOutputTextBox.AppendText("SET @PATH := @CGUID * 10;\r\n");
-            SQLOutputTextBox.AppendText("DELETE FROM `waypoint_data` WHERE `id`= @PATH;\r\n");
-            SQLOutputTextBox.AppendText("INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `delay`) VALUES\r\n");
+            SQLOutputTextBox.AppendText("SET @CGUID := xxxxxx;" + Environment.NewLine);
+            SQLOutputTextBox.AppendText("SET @PATH := @CGUID * 10;" + Environment.NewLine);
+            SQLOutputTextBox.AppendText("DELETE FROM `waypoint_data` WHERE `id`= @PATH;" + Environment.NewLine);
+            SQLOutputTextBox.AppendText("INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `delay`) VALUES" + Environment.NewLine);
 
             int rowCount = 0;
             DataGridViewRow firstRow = null;
@@ -397,15 +402,15 @@ namespace WaypointCreatorGen2
 
                 ++rowCount;
                 if (rowCount < EditorGridView.Rows.Count)
-                    SQLOutputTextBox.AppendText($"(@PATH, {row.Cells[0].Value}, {row.Cells[1].Value}, {row.Cells[2].Value}, {row.Cells[3].Value}, {row.Cells[4].Value}, {row.Cells[6].Value}),\r\n");
+                    SQLOutputTextBox.AppendText($"(@PATH, {row.Cells[0].Value}, {row.Cells[1].Value}, {row.Cells[2].Value}, {row.Cells[3].Value}, {row.Cells[4].Value}, {row.Cells[6].Value})," + Environment.NewLine);
                 else
-                    SQLOutputTextBox.AppendText($"(@PATH, {row.Cells[0].Value}, {row.Cells[1].Value}, {row.Cells[2].Value}, {row.Cells[3].Value}, {row.Cells[4].Value}, {row.Cells[6].Value});\r\n");
+                    SQLOutputTextBox.AppendText($"(@PATH, {row.Cells[0].Value}, {row.Cells[1].Value}, {row.Cells[2].Value}, {row.Cells[3].Value}, {row.Cells[4].Value}, {row.Cells[6].Value});" + Environment.NewLine);
             }
 
-            SQLOutputTextBox.AppendText("\r\n");
+            SQLOutputTextBox.AppendText(Environment.NewLine);
 
-            SQLOutputTextBox.AppendText("DELETE FROM `waypoint_data_addon` WHERE `PathID`= @PATH;\r\n");
-            SQLOutputTextBox.AppendText("INSERT INTO `waypoint_data_addon` (`PathID`, `PointID`, `SplinePointIndex`, `PositionX`, `PositionY`, `PositionZ`) VALUES\r\n");
+            SQLOutputTextBox.AppendText("DELETE FROM `waypoint_data_addon` WHERE `PathID`= @PATH;" + Environment.NewLine);
+            SQLOutputTextBox.AppendText("INSERT INTO `waypoint_data_addon` (`PathID`, `PointID`, `SplinePointIndex`, `PositionX`, `PositionY`, `PositionZ`) VALUES" + Environment.NewLine);
 
             int splineRowCount = 0;
             DataGridViewRow splineFirstRow = null;
@@ -415,24 +420,22 @@ namespace WaypointCreatorGen2
                     splineFirstRow = row;
 
                 ++splineRowCount;
-                if (splineRowCount < SplineGridView.Rows.Count)
-                    SQLOutputTextBox.AppendText($"(@PATH, {row.Cells[0].Value}, {row.Cells[1].Value}, {row.Cells[2].Value}, {row.Cells[3].Value}, {row.Cells[4].Value}),\r\n");
-                else
-                    SQLOutputTextBox.AppendText($"(@PATH, {row.Cells[0].Value}, {row.Cells[1].Value}, {row.Cells[2].Value}, {row.Cells[3].Value}, {row.Cells[4].Value});\r\n");
+                SQLOutputTextBox.AppendText($"(@PATH, {row.Cells[0].Value}, {row.Cells[1].Value}, {row.Cells[2].Value}, {row.Cells[3].Value}, {row.Cells[4].Value})" +
+                    $"{(splineRowCount < SplineGridView.Rows.Count ? "," : ";")}" + Environment.NewLine);
             }
 
-            SQLOutputTextBox.AppendText("\r\n");
+            SQLOutputTextBox.AppendText(Environment.NewLine);
 
             // creature
             if (firstRow != null)
-                SQLOutputTextBox.AppendText($"UPDATE `creature` SET `position_x`= {firstRow.Cells[1].Value}, `position_y`= {firstRow.Cells[2].Value}, `position_z`= {firstRow.Cells[3].Value}, `orientation`= {firstRow.Cells[4].Value}, `spawndist`= 0, `MovementType`= 2 WHERE `guid`= @CGUID;\r\n");
+                SQLOutputTextBox.AppendText($"UPDATE `creature` SET `position_x`= {firstRow.Cells[1].Value}, `position_y`= {firstRow.Cells[2].Value}, `position_z`= {firstRow.Cells[3].Value}, `orientation`= {firstRow.Cells[4].Value}, `spawndist`= 0, `MovementType`= 2 WHERE `guid`= @CGUID;" + Environment.NewLine);
 
             // creature_addon
-            SQLOutputTextBox.AppendText("DELETE FROM `creature_addon` WHERE `guid`= @CGUID;\r\n");
-            SQLOutputTextBox.AppendText("INSERT INTO `creature_addon` (`guid`, `waypointPathId`, `bytes2`) VALUES\r\n");
-            SQLOutputTextBox.AppendText("(@CGUID, @PATH, 1);\r\n");
-            SQLOutputTextBox.AppendText("\r\n");
-            SQLOutputTextBox.AppendText("\r\n");
+            SQLOutputTextBox.AppendText("DELETE FROM `creature_addon` WHERE `guid`= @CGUID;" + Environment.NewLine);
+            SQLOutputTextBox.AppendText("INSERT INTO `creature_addon` (`guid`, `waypointPathId`, `bytes2`) VALUES" + Environment.NewLine);
+            SQLOutputTextBox.AppendText("(@CGUID, @PATH, 1);" + Environment.NewLine);
+            SQLOutputTextBox.AppendText(Environment.NewLine);
+            SQLOutputTextBox.AppendText(Environment.NewLine);
 
             TabControl.SelectedTab = TabControl.TabPages[1];
         }
@@ -440,11 +443,13 @@ namespace WaypointCreatorGen2
         private void SQLOutputSaveButton_Click(object sender, EventArgs e)
         {
             // Saving the text of the SQLOutputTextBox into a file
-            SaveFileDialog dialog = new SaveFileDialog();
-            dialog.Filter = "Structured Query Language (*.sql)|*.sql|All files (*.*)|*.*";
-            dialog.FilterIndex = 1;
-            dialog.DefaultExt = "sql";
-            dialog.RestoreDirectory = true;
+            SaveFileDialog dialog = new SaveFileDialog
+            {
+                Filter = "Structured Query Language (*.sql)|*.sql|All files (*.*)|*.*",
+                FilterIndex = 1,
+                DefaultExt = "sql",
+                RestoreDirectory = true
+            };
 
             if (dialog.ShowDialog() == DialogResult.OK)
                 File.WriteAllText(dialog.FileName, SQLOutputTextBox.Text, System.Text.Encoding.UTF8);
@@ -483,5 +488,4 @@ namespace WaypointCreatorGen2
         public float PositionY = 0f;
         public float PositionZ = 0f;
     }
-
 }
