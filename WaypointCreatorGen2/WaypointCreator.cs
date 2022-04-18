@@ -58,9 +58,9 @@ namespace WaypointCreatorGen2
         // Parses all waypoint data from the provided file and returns a container filled with all needed data
         private Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>> GetWaypointDataFromSniff(string filePath)
         {
-            Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>> result = new Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>>();
+            Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>> result = new();
 
-            using (System.IO.StreamReader file = new System.IO.StreamReader(filePath))
+            using (StreamReader file = new(filePath))
             {
                 string line;
                 while ((line = file.ReadLine()) != null)
@@ -182,7 +182,27 @@ namespace WaypointCreatorGen2
                 }
             }
 
-            return result;
+            // Remove data with one or less points
+            Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>> finalResult = new();
+            
+            foreach (var entryPair in result)
+            {
+                foreach (var guidPair in entryPair.Value)
+                {
+                    if (guidPair.Value.Count > 2)
+                    {
+                        if (!finalResult.ContainsKey(entryPair.Key))
+                            finalResult[entryPair.Key] = new();
+
+                        if (!finalResult[entryPair.Key].ContainsKey(guidPair.Key))
+                            finalResult[entryPair.Key][guidPair.Key] = new();
+
+                        finalResult[entryPair.Key][guidPair.Key] = guidPair.Value;
+                    }
+                }
+            }
+
+            return finalResult;
         }
 
         private void ListEntries(uint creatureId)
