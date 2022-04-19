@@ -13,7 +13,7 @@ namespace WaypointCreatorGen2
         // Dictionary<UInt32 /*CreatureID*/, Dictionary<UInt64 /*lowGUID*/, List<WaypointInfo>>>
         Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>> WaypointDatabyCreatureEntry = new Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>>();
 
-        DataGridViewRow[] CopiedDataGridRows;
+        List<WaypointInfo> CopiedWaypoints;
         List<WaypointInfo> CurrentWaypoints;
 
 
@@ -323,8 +323,6 @@ namespace WaypointCreatorGen2
             if (EditorGridView.SelectedRows.Count == 0)
                 return;
 
-            CopiedDataGridRows = new DataGridViewRow[EditorGridView.SelectedRows.Count];
-            EditorGridView.SelectedRows.CopyTo(CopiedDataGridRows, 0);
 
             foreach (DataGridViewRow row in EditorGridView.SelectedRows)
             {
@@ -391,8 +389,13 @@ namespace WaypointCreatorGen2
             if (EditorGridView.SelectedRows.Count == 0)
                 return;
 
-            CopiedDataGridRows = new DataGridViewRow[EditorGridView.SelectedRows.Count];
-            EditorGridView.SelectedRows.CopyTo(CopiedDataGridRows, 0);
+            CopiedWaypoints = new();
+
+            for (int i = 0; i < EditorGridView.SelectedRows.Count; i++)
+            {
+                var row = EditorGridView.SelectedRows[i];
+                CopiedWaypoints.Add(CurrentWaypoints[row.Index]);
+            }
         }
 
         private void PasteAboveStripMenuItem_Click(object sender, EventArgs e)
@@ -407,52 +410,13 @@ namespace WaypointCreatorGen2
 
         private void PasteRows(bool aboveSelection)
         {
-            if (CopiedDataGridRows == null || CopiedDataGridRows.Length == 0 || EditorGridView.SelectedRows.Count == 0)
+            if (CopiedWaypoints == null || CopiedWaypoints.Count == 0 || EditorGridView.SelectedRows.Count == 0)
                 return;
 
             int index = aboveSelection ? EditorGridView.SelectedRows[0].Index : EditorGridView.SelectedRows[EditorGridView.SelectedRows.Count - 1].Index + 1;
+            CurrentWaypoints.InsertRange(index, CopiedWaypoints);
 
-            DataGridViewRow[] rowsCopy = new DataGridViewRow[EditorGridView.Rows.Count];
-            EditorGridView.Rows.CopyTo(rowsCopy, 0);
-            EditorGridView.Rows.Clear();
-            Array.Reverse(CopiedDataGridRows);
-
-            int appendedIndex = 0;
-            // First we append all waypoints that we had before the paste location
-            for (; appendedIndex < index; ++appendedIndex)
-                EditorGridView.Rows.Add(
-                    appendedIndex,
-                    rowsCopy[appendedIndex].Cells[1].Value,
-                    rowsCopy[appendedIndex].Cells[2].Value,
-                    rowsCopy[appendedIndex].Cells[3].Value,
-                    rowsCopy[appendedIndex].Cells[4].Value,
-                    rowsCopy[appendedIndex].Cells[5].Value,
-                    rowsCopy[appendedIndex].Cells[6].Value);
-
-            // Paste location reached, append copied rows
-            foreach (DataGridViewRow row in CopiedDataGridRows)
-                EditorGridView.Rows.Add(
-                    index++,
-                    row.Cells[1].Value,
-                    row.Cells[2].Value,
-                    row.Cells[3].Value,
-                    row.Cells[4].Value,
-                    row.Cells[5].Value,
-                    row.Cells[6].Value);
-
-            // Copied rows added, append remaining points
-            for (; appendedIndex < rowsCopy.Length; ++appendedIndex)
-                EditorGridView.Rows.Add(
-                    appendedIndex + CopiedDataGridRows.Length,
-                    rowsCopy[appendedIndex].Cells[1].Value,
-                    rowsCopy[appendedIndex].Cells[2].Value,
-                    rowsCopy[appendedIndex].Cells[3].Value,
-                    rowsCopy[appendedIndex].Cells[4].Value,
-                    rowsCopy[appendedIndex].Cells[5].Value,
-                    rowsCopy[appendedIndex].Cells[6].Value);
-
-            // GridView is updated, rebuild the graph path.
-            BuildGraphPath();
+            ShowWaypointDatas();
         }
 
         private void GenerateSQLStripMenuItem_Click(object sender, EventArgs e)
