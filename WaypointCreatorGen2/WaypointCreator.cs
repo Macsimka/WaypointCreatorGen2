@@ -460,19 +460,21 @@ namespace WaypointCreatorGen2
             // Generates the SQL output.
             // waypoint_data
             SQLOutputTextBox.Clear();
-            SQLOutputTextBox.AppendText("SET @CGUID := xxxxxx;" + Environment.NewLine);
-            SQLOutputTextBox.AppendText("SET @PATH := @CGUID * 10;" + Environment.NewLine);
+            SQLOutputTextBox.AppendText("SET @WPGUID := xxxxxx;" + Environment.NewLine);
+            SQLOutputTextBox.AppendText("SET @PATH := @WPGUID * 10;" + Environment.NewLine);
+            SQLOutputTextBox.AppendText("UPDATE `creature` SET `spawndist` = 0, `MovementType` = 2 WHERE `guid` = @WPGUID;" + Environment.NewLine);
+            
+            // creature_addon
+            SQLOutputTextBox.AppendText("REPLACE INTO `creature_addon` (`guid`, `waypointPathId`, `bytes2`) VALUES (@CGUID, @PATH, 1);" + Environment.NewLine);
+
             SQLOutputTextBox.AppendText("DELETE FROM `waypoint_data` WHERE `id`= @PATH;" + Environment.NewLine);
             SQLOutputTextBox.AppendText("INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `delay`) VALUES" + Environment.NewLine);
 
             int rowCount = 0;
-            DataGridViewRow firstRow = null;
             foreach (DataGridViewRow row in EditorGridView.Rows)
             {
-                if (rowCount == 0)
-                    firstRow = row;
-
                 ++rowCount;
+
                 if (rowCount < EditorGridView.Rows.Count)
                     SQLOutputTextBox.AppendText($"(@PATH, {row.Cells[0].Value}, {row.Cells[1].Value}, {row.Cells[2].Value}, {row.Cells[3].Value}, {row.Cells[4].Value}, {row.Cells[6].Value})," + Environment.NewLine);
                 else
@@ -485,29 +487,14 @@ namespace WaypointCreatorGen2
             SQLOutputTextBox.AppendText("INSERT INTO `waypoint_data_addon` (`PathID`, `PointID`, `SplinePointIndex`, `PositionX`, `PositionY`, `PositionZ`) VALUES" + Environment.NewLine);
 
             int splineRowCount = 0;
-            DataGridViewRow splineFirstRow = null;
+
             foreach (DataGridViewRow row in SplineGridView.Rows)
             {
-                if (splineRowCount == 0)
-                    splineFirstRow = row;
-
                 ++splineRowCount;
+
                 SQLOutputTextBox.AppendText($"(@PATH, {row.Cells[0].Value}, {row.Cells[1].Value}, {row.Cells[2].Value}, {row.Cells[3].Value}, {row.Cells[4].Value})" +
                     $"{(splineRowCount < SplineGridView.Rows.Count ? "," : ";")}" + Environment.NewLine);
             }
-
-            SQLOutputTextBox.AppendText(Environment.NewLine);
-
-            // creature
-            if (firstRow != null)
-                SQLOutputTextBox.AppendText($"UPDATE `creature` SET `position_x`= {firstRow.Cells[1].Value}, `position_y`= {firstRow.Cells[2].Value}, `position_z`= {firstRow.Cells[3].Value}, `orientation`= {firstRow.Cells[4].Value}, `spawndist`= 0, `MovementType`= 2 WHERE `guid`= @CGUID;" + Environment.NewLine);
-
-            // creature_addon
-            SQLOutputTextBox.AppendText("DELETE FROM `creature_addon` WHERE `guid`= @CGUID;" + Environment.NewLine);
-            SQLOutputTextBox.AppendText("INSERT INTO `creature_addon` (`guid`, `waypointPathId`, `bytes2`) VALUES" + Environment.NewLine);
-            SQLOutputTextBox.AppendText("(@CGUID, @PATH, 1);" + Environment.NewLine);
-            SQLOutputTextBox.AppendText(Environment.NewLine);
-            SQLOutputTextBox.AppendText(Environment.NewLine);
 
             TabControl.SelectedTab = TabControl.TabPages[1];
         }
