@@ -52,6 +52,7 @@ namespace WaypointCreatorGen2
             this.SplineGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.GridViewContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.CutStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.RemoveDuplicatePointsStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CopyStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PasteAboveStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PasteBelowStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -147,7 +148,6 @@ namespace WaypointCreatorGen2
             this.SplineGridViewTextBoxColumn3,
             this.SplineGridViewTextBoxColumn4,
             this.SplineGridViewTextBoxColumn5});
-            this.SplineGridView.ContextMenuStrip = this.GridViewContextMenuStrip;
             this.SplineGridView.Location = new System.Drawing.Point(9, 308);
             this.SplineGridView.Margin = new System.Windows.Forms.Padding(4);
             this.SplineGridView.Name = "SplineGridView";
@@ -217,6 +217,7 @@ namespace WaypointCreatorGen2
             this.CopyStripMenuItem,
             this.PasteAboveStripMenuItem,
             this.PasteBelowStripMenuItem,
+            this.RemoveDuplicatePointsStripMenuItem,
             this.GenerateSQLStripMenuItem});
             this.GridViewContextMenuStrip.Name = "GridViewContextMenuStrip";
             this.GridViewContextMenuStrip.Size = new System.Drawing.Size(169, 124);
@@ -227,6 +228,13 @@ namespace WaypointCreatorGen2
             this.CutStripMenuItem.Size = new System.Drawing.Size(168, 24);
             this.CutStripMenuItem.Text = "Cut";
             this.CutStripMenuItem.Click += new System.EventHandler(this.CutStripMenuItem_Click);
+            // 
+            // RemoveDuplicatePointsStripMenuItem
+            // 
+            this.RemoveDuplicatePointsStripMenuItem.Name = "RemoveDuplicatePointsStripMenuItem";
+            this.RemoveDuplicatePointsStripMenuItem.Size = new System.Drawing.Size(168, 24);
+            this.RemoveDuplicatePointsStripMenuItem.Text = "Remove duplicate points"; ;
+            this.RemoveDuplicatePointsStripMenuItem.Click += new System.EventHandler(this.RemoveDuplicates_Click);
             // 
             // CopyStripMenuItem
             // 
@@ -642,6 +650,7 @@ namespace WaypointCreatorGen2
         private System.Windows.Forms.DataGridViewTextBoxColumn Delay;
         private System.Windows.Forms.ContextMenuStrip GridViewContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem CutStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem RemoveDuplicatePointsStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem CopyStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem PasteAboveStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem PasteBelowStripMenuItem;

@@ -334,6 +334,27 @@ namespace WaypointCreatorGen2
             ShowWaypointDatas();
         }
 
+        private void RemoveDuplicates_Click(object sender, EventArgs e)
+        {
+            List<WaypointInfo> waypoints = new();
+
+            foreach (WaypointInfo waypoint in CurrentWaypoints)
+            {
+                if (waypoint.HasOrientation())
+                {
+                    waypoints.Add(waypoint);
+                    continue;
+                }
+
+                if (waypoints.All(compareWaypoint => !(waypoint.Position.GetExactDist2d(compareWaypoint.Position) <= 1.0f)))
+                    waypoints.Add(waypoint);
+            }
+
+            CurrentWaypoints = waypoints;
+
+            ShowWaypointDatas();
+        }
+
         private void CopyStripMenuItem_Click(object sender, EventArgs e)
         {
             if (EditorGridView.SelectedRows.Count == 0)
@@ -488,10 +509,15 @@ namespace WaypointCreatorGen2
     public class WaypointInfo
     {
         public uint TimeStamp = 0;
-        public WaypointPosition Position = new WaypointPosition();
+        public WaypointPosition Position = new();
         public uint MoveTime = 0;
         public int Delay = 0;
-        public List<SplinePosition> SplineList = new List<SplinePosition>();
+        public List<SplinePosition> SplineList = new();
+
+        public bool HasOrientation()
+        {
+            return Position.Orientation != null;
+        }
     }
 
     public class WaypointPosition
@@ -500,6 +526,17 @@ namespace WaypointCreatorGen2
         public float PositionY = 0f;
         public float PositionZ = 0f;
         public float? Orientation;
+
+        public float GetExactDist2d(WaypointPosition comparePos)
+        {
+            return (float)Math.Sqrt(GetExactDist2dSq(this, comparePos));
+        }
+
+        public static double GetExactDist2dSq(WaypointPosition mainPos, WaypointPosition comparePos)
+        {
+            double dx = mainPos.PositionX - comparePos.PositionX; double dy = mainPos.PositionY - comparePos.PositionY;
+            return dx * dx + dy * dy;
+        }
     }
 
     public class SplinePosition
