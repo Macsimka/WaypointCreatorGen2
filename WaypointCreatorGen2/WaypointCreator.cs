@@ -184,10 +184,10 @@ namespace WaypointCreatorGen2
 
             // Remove data with one or less points
             Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>> finalResult = new();
-            
-            foreach (var entryPair in result)
+
+            foreach (KeyValuePair<uint, Dictionary<ulong, List<WaypointInfo>>> entryPair in result)
             {
-                foreach (var guidPair in entryPair.Value)
+                foreach (KeyValuePair<ulong, List<WaypointInfo>> guidPair in entryPair.Value)
                 {
                     if (guidPair.Value.Count > 2)
                     {
@@ -351,6 +351,37 @@ namespace WaypointCreatorGen2
             }
 
             CurrentWaypoints = waypoints;
+
+            ShowWaypointDatas();
+        }
+
+        private void RemoveNearest_Click(object sender, EventArgs e)
+        {
+            bool canLoop = true;
+
+            do
+            {
+                foreach (WaypointInfo wp in CurrentWaypoints)
+                {
+                    WaypointInfo nextWaypoint;
+                    try
+                    {
+                        nextWaypoint = CurrentWaypoints[CurrentWaypoints.IndexOf(wp) + 1];
+                    }
+                    catch
+                    {
+                        canLoop = false;
+                        break;
+                    }
+
+                    if (wp.Position.GetExactDist2d(nextWaypoint.Position) <= 5.0f && !nextWaypoint.HasOrientation())
+                    {
+                        CurrentWaypoints.RemoveAt(CurrentWaypoints.IndexOf(wp) + 1);
+                        break;
+                    }
+                }
+            }
+            while (canLoop);
 
             ShowWaypointDatas();
         }

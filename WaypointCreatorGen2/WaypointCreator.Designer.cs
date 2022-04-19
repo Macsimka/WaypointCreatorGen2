@@ -53,6 +53,7 @@ namespace WaypointCreatorGen2
             this.GridViewContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.CutStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.RemoveDuplicatePointsStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.RemoveNearestPointsStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CopyStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PasteAboveStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PasteBelowStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -218,6 +219,7 @@ namespace WaypointCreatorGen2
             this.PasteAboveStripMenuItem,
             this.PasteBelowStripMenuItem,
             this.RemoveDuplicatePointsStripMenuItem,
+            this.RemoveNearestPointsStripMenuItem,
             this.GenerateSQLStripMenuItem});
             this.GridViewContextMenuStrip.Name = "GridViewContextMenuStrip";
             this.GridViewContextMenuStrip.Size = new System.Drawing.Size(169, 124);
@@ -233,8 +235,15 @@ namespace WaypointCreatorGen2
             // 
             this.RemoveDuplicatePointsStripMenuItem.Name = "RemoveDuplicatePointsStripMenuItem";
             this.RemoveDuplicatePointsStripMenuItem.Size = new System.Drawing.Size(168, 24);
-            this.RemoveDuplicatePointsStripMenuItem.Text = "Remove duplicate points"; ;
+            this.RemoveDuplicatePointsStripMenuItem.Text = "Remove duplicate points";
             this.RemoveDuplicatePointsStripMenuItem.Click += new System.EventHandler(this.RemoveDuplicates_Click);
+            // 
+            // RemoveNearestPointsStripMenuItem
+            // 
+            this.RemoveNearestPointsStripMenuItem.Name = "RemoveNearestPointsStripMenuItem";
+            this.RemoveNearestPointsStripMenuItem.Size = new System.Drawing.Size(168, 24);
+            this.RemoveNearestPointsStripMenuItem.Text = "Remove nearest points";
+            this.RemoveNearestPointsStripMenuItem.Click += new System.EventHandler(this.RemoveNearest_Click);
             // 
             // CopyStripMenuItem
             // 
@@ -651,6 +660,7 @@ namespace WaypointCreatorGen2
         private System.Windows.Forms.ContextMenuStrip GridViewContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem CutStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem RemoveDuplicatePointsStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem RemoveNearestPointsStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem CopyStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem PasteAboveStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem PasteBelowStripMenuItem;
