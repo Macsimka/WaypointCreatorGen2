@@ -344,7 +344,7 @@ namespace WaypointCreatorGen2
                     continue;
                 }
 
-                if (waypoints.All(compareWaypoint => !(waypoint.Position.GetExactDist2d(compareWaypoint.Position) <= 1.0f)))
+                if (waypoints.All(compareWaypoint => !(waypoint.Position.GetExactDist2d(compareWaypoint.Position) <= 2.0f)))
                     waypoints.Add(waypoint);
             }
 
@@ -372,7 +372,7 @@ namespace WaypointCreatorGen2
                         break;
                     }
 
-                    if (wp.Position.GetExactDist2d(nextWaypoint.Position) <= 5.0f && !nextWaypoint.HasOrientation())
+                    if (wp.Position.GetExactDist2d(nextWaypoint.Position) <= 10.0f && !nextWaypoint.HasOrientation())
                     {
                         CurrentWaypoints.RemoveAt(CurrentWaypoints.IndexOf(wp) + 1);
                         break;
