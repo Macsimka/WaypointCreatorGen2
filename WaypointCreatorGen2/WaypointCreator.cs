@@ -320,16 +320,7 @@ namespace WaypointCreatorGen2
 
         private void CutStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (EditorGridView.SelectedRows.Count == 0)
-                return;
-
-
-            foreach (DataGridViewRow row in EditorGridView.SelectedRows)
-            {
-                CurrentWaypoints.RemoveAt(row.Index);
-            }
-
-            ShowWaypointDatas();
+            HandleDeleteItem();
         }
 
         private void RemoveDuplicates_Click(object sender, EventArgs e)
@@ -429,7 +420,7 @@ namespace WaypointCreatorGen2
             SQLOutputTextBox.AppendText("UPDATE `creature` SET `spawndist` = 0, `MovementType` = 2 WHERE `guid` = @WPGUID;" + Environment.NewLine);
             
             // creature_addon
-            SQLOutputTextBox.AppendText("REPLACE INTO `creature_addon` (`guid`, `waypointPathId`, `bytes2`) VALUES (@CGUID, @PATH, 1);" + Environment.NewLine);
+            SQLOutputTextBox.AppendText("REPLACE INTO `creature_addon` (`guid`, `waypointPathId`, `bytes2`) VALUES (@WPGUID, @PATH, 1);" + Environment.NewLine);
 
             SQLOutputTextBox.AppendText("DELETE FROM `waypoint_data` WHERE `id`= @PATH;" + Environment.NewLine);
             SQLOutputTextBox.AppendText("INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `delay`) VALUES" + Environment.NewLine);
@@ -485,6 +476,31 @@ namespace WaypointCreatorGen2
 
             uint.TryParse(EditorFilterEntryTextBox.Text, out uint creatureId);
             ListEntries(creatureId);
+        }
+
+        private void EditorGridView_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+                HandleDeleteItem();
+        }
+
+        void HandleDeleteItem()
+        {
+            if (EditorGridView.SelectedRows.Count == 0)
+                return;
+
+            List<int> indexesToRemove = new();
+
+            foreach (DataGridViewRow row in EditorGridView.SelectedRows)
+                indexesToRemove.Add(row.Index);
+
+            indexesToRemove.Sort();
+            indexesToRemove.Reverse();
+
+            foreach (int index in indexesToRemove)
+                CurrentWaypoints.RemoveAt(index);
+
+            ShowWaypointDatas();
         }
     }
 

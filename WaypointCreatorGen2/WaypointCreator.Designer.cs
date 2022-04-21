@@ -300,6 +300,7 @@ namespace WaypointCreatorGen2
             this.EditorGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.EditorGridView.Size = new System.Drawing.Size(737, 290);
             this.EditorGridView.TabIndex = 0;
+            this.EditorGridView.KeyUp += new System.Windows.Forms.KeyEventHandler(this.EditorGridView_KeyUp);
             // 
             // ID
             // 
