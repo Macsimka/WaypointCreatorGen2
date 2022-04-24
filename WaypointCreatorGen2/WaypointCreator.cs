@@ -423,7 +423,7 @@ namespace WaypointCreatorGen2
             SQLOutputTextBox.AppendText("REPLACE INTO `creature_addon` (`guid`, `waypointPathId`, `bytes2`) VALUES (@WPGUID, @PATH, 1);" + Environment.NewLine);
 
             SQLOutputTextBox.AppendText("DELETE FROM `waypoint_data` WHERE `id`= @PATH;" + Environment.NewLine);
-            SQLOutputTextBox.AppendText("INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `delay`) VALUES" + Environment.NewLine);
+            SQLOutputTextBox.AppendText("INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `delay`, `move_type`, `velocity`) VALUES" + Environment.NewLine);
 
             int rowCount = 0;
             foreach (DataGridViewRow row in EditorGridView.Rows)
@@ -431,9 +431,9 @@ namespace WaypointCreatorGen2
                 ++rowCount;
 
                 if (rowCount < EditorGridView.Rows.Count)
-                    SQLOutputTextBox.AppendText($"(@PATH, {row.Cells[0].Value}, {row.Cells[1].Value}, {row.Cells[2].Value}, {row.Cells[3].Value}, {row.Cells[4].Value}, {row.Cells[6].Value})," + Environment.NewLine);
+                    SQLOutputTextBox.AppendText($"(@PATH, {row.Cells[0].Value}, {row.Cells[1].Value}, {row.Cells[2].Value}, {row.Cells[3].Value}, {row.Cells[4].Value}, {row.Cells[6].Value}, 0, 0)," + Environment.NewLine);
                 else
-                    SQLOutputTextBox.AppendText($"(@PATH, {row.Cells[0].Value}, {row.Cells[1].Value}, {row.Cells[2].Value}, {row.Cells[3].Value}, {row.Cells[4].Value}, {row.Cells[6].Value});" + Environment.NewLine);
+                    SQLOutputTextBox.AppendText($"(@PATH, {row.Cells[0].Value}, {row.Cells[1].Value}, {row.Cells[2].Value}, {row.Cells[3].Value}, {row.Cells[4].Value}, {row.Cells[6].Value}, 0, 0);" + Environment.NewLine);
             }
 
             SQLOutputTextBox.AppendText(Environment.NewLine);
