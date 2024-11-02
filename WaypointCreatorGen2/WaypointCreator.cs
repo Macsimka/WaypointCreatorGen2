@@ -11,10 +11,10 @@ namespace WaypointCreatorGen2
     public partial class WaypointCreator : Form
     {
         // Dictionary<UInt32 /*CreatureID*/, Dictionary<UInt64 /*lowGUID*/, List<WaypointInfo>>>
-        SortedDictionary<uint, Dictionary<ulong, List<WaypointInfo>>> WaypointDatabyCreatureEntry = new();
+        private SortedDictionary<uint, Dictionary<ulong, List<WaypointInfo>>> WaypointDatabyCreatureEntry = new();
 
-        List<WaypointInfo> CopiedWaypoints;
-        List<WaypointInfo> CurrentWaypoints;
+        private List<WaypointInfo> CopiedWaypoints;
+        private List<WaypointInfo> CurrentWaypoints;
 
 
         public WaypointCreator()
@@ -30,10 +30,12 @@ namespace WaypointCreatorGen2
 
         private async void EditorImportSniffButton_Click(object sender, EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            dialog.FilterIndex = 1;
-            dialog.RestoreDirectory = true;
+            OpenFileDialog dialog = new()
+            {
+                Filter = @"txt files (*.txt)|*.txt|All files (*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = true
+            };
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -44,35 +46,34 @@ namespace WaypointCreatorGen2
                 EditorImportSniffButton.Enabled = false;
                 EditorFilterEntryButton.Enabled = false;
                 GridViewContextMenuStrip.Enabled = false;
-                EditorLoadingLabel.Text = "Loading [" + Path.GetFileName(dialog.FileName) + "]...";
+                EditorLoadingLabel.Text = @"Loading [" + Path.GetFileName(dialog.FileName) + @"]...";
 
                 WaypointDatabyCreatureEntry = await Task.Run(() => GetWaypointDataFromSniff(dialog.FileName));
 
                 EditorImportSniffButton.Enabled = true;
                 EditorFilterEntryButton.Enabled = true;
-                EditorLoadingLabel.Text = "Loaded [" + Path.GetFileName(dialog.FileName) + "].";
+                EditorLoadingLabel.Text = @"Loaded [" + Path.GetFileName(dialog.FileName) + @"].";
                 ListEntries(0); // Initially listing all available GUIDs
             }
         }
 
         // Parses all waypoint data from the provided file and returns a container filled with all needed data
-        private SortedDictionary<uint, Dictionary<ulong, List<WaypointInfo>>> GetWaypointDataFromSniff(string filePath)
+        private static SortedDictionary<uint, Dictionary<ulong, List<WaypointInfo>>> GetWaypointDataFromSniff(string filePath)
         {
-            Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>> result = new();
+            Dictionary<uint, Dictionary<ulong, List<WaypointInfo>>> result = [];
 
             using (StreamReader file = new(filePath))
             {
-                string line;
-                while ((line = file.ReadLine()) != null)
+                while (file.ReadLine() is { } line)
                 {
                     if (line.Contains("SMSG_ON_MONSTER_MOVE") || line.Contains("SMSG_ON_MONSTER_MOVE_TRANSPORT"))
                     {
-                        WaypointInfo wpInfo = new WaypointInfo();
+                        WaypointInfo wpInfo = new();
                         uint creatureId = 0;
                         ulong lowGuid = 0;
 
                         // Extracting the packet timestamp in milliseconds from the packet header for delay calculations
-                        string[] packetHeader = line.Split(new[] { ' ' });
+                        string[] packetHeader = line.Split([' ']);
                         for (int i = 0; i < packetHeader.Length; ++i)
                         {
                             if (packetHeader[i].Contains("Time:"))
@@ -92,7 +93,7 @@ namespace WaypointCreatorGen2
                             // Extracting entry and lowGuid from packet
                             if (line.Contains("MoverGUID:"))
                             {
-                                string[] words = line.Split(new[] { ' ' });
+                                string[] words = line.Split([' ']);
                                 for (int i = 0; i < words.Length; ++i)
                                 {
                                     if (words[i].Contains("Entry:"))
@@ -109,7 +110,7 @@ namespace WaypointCreatorGen2
                             // Extracting spline duration
                             if (line.Contains("MoveTime:"))
                             {
-                                string[] words = line.Split(new[] { ' ' });
+                                string[] words = line.Split([' ']);
                                 for (int i = 0; i < words.Length; ++i)
                                     if (words[i].Contains("MoveTime:"))
                                         wpInfo.MoveTime = uint.Parse(words[i + 1]);
@@ -118,7 +119,7 @@ namespace WaypointCreatorGen2
                             // Extract Facing Angles
                             if (line.Contains("FaceDirection:"))
                             {
-                                string[] words = line.Split(new[] { ' ' });
+                                string[] words = line.Split([' ']);
                                 for (int i = 0; i < words.Length; ++i)
                                     if (words[i].Contains("FaceDirection:"))
                                         wpInfo.Position.Orientation = float.Parse(words[i + 1], CultureInfo.InvariantCulture);
@@ -127,7 +128,7 @@ namespace WaypointCreatorGen2
                             // Extracting waypoint (The space in the string is intentional. Do not remove!)
                             if (line.Contains(" Points:"))
                             {
-                                string[] words = line.Split(new[] { ' ' });
+                                string[] words = line.Split([' ']);
                                 for (int i = 0; i < words.Length; ++i)
                                 {
                                     if (words[i].Contains("X:"))
@@ -152,18 +153,18 @@ namespace WaypointCreatorGen2
 
                                 // Everything gathered, time to store the data
                                 if (!result.ContainsKey(creatureId))
-                                    result.Add(creatureId, new Dictionary<ulong, List<WaypointInfo>>());
+                                    result.Add(creatureId, new());
 
                                 if (!result[creatureId].ContainsKey(lowGuid))
-                                    result[creatureId].Add(lowGuid, new List<WaypointInfo>());
+                                    result[creatureId].Add(lowGuid, []);
 
                                 result[creatureId][lowGuid].Add(wpInfo);
                             }
 
                             if (line.Contains(" WayPoints:"))
                             {
-                                string[] words = line.Split(new[] { ' ' });
-                                SplinePosition splinePosition = new SplinePosition();
+                                string[] words = line.Split([' ']);
+                                SplinePosition splinePosition = new();
                                 for (int i = 0; i < words.Length; ++i)
                                 {
                                     if (words[i].Contains("X:"))
@@ -192,10 +193,10 @@ namespace WaypointCreatorGen2
                     if (guidPair.Value.Count > 2)
                     {
                         if (!finalResult.ContainsKey(entryPair.Key))
-                            finalResult[entryPair.Key] = new();
+                            finalResult[entryPair.Key] = [];
 
                         if (!finalResult[entryPair.Key].ContainsKey(guidPair.Key))
-                            finalResult[entryPair.Key][guidPair.Key] = new();
+                            finalResult[entryPair.Key][guidPair.Key] = [];
 
                         finalResult[entryPair.Key][guidPair.Key] = guidPair.Value;
                     }
@@ -213,13 +214,13 @@ namespace WaypointCreatorGen2
             {
                 foreach (KeyValuePair<uint, Dictionary<ulong, List<WaypointInfo>>> waypointsByEntry in WaypointDatabyCreatureEntry)
                     foreach (KeyValuePair<ulong, List<WaypointInfo>> waypointsByGuid in waypointsByEntry.Value)
-                        EditorListBox.Items.Add(waypointsByEntry.Key.ToString() + " (" + waypointsByGuid.Key.ToString() + ")");
+                        EditorListBox.Items.Add(waypointsByEntry.Key + " (" + waypointsByGuid.Key + ")");
             }
             else
             {
                 if (WaypointDatabyCreatureEntry.TryGetValue(creatureId, out var value))
                     foreach (KeyValuePair<ulong, List<WaypointInfo>> waypointsByGuid in value)
-                        EditorListBox.Items.Add(creatureId.ToString() + " (" + waypointsByGuid.Key.ToString() + ")");
+                        EditorListBox.Items.Add(creatureId + " (" + waypointsByGuid.Key + ")");
             }
         }
 
@@ -229,7 +230,7 @@ namespace WaypointCreatorGen2
                 return;
 
             CurrentWaypoints = WaypointDatabyCreatureEntry[creatureId].ContainsKey(lowGUID)
-                ? WaypointDatabyCreatureEntry[creatureId][lowGUID].ToList() // copy waypoint container
+                ? [.. WaypointDatabyCreatureEntry[creatureId][lowGUID]] // copy waypoint container
                 : null;
 
             ShowWaypointDatas();
@@ -244,6 +245,7 @@ namespace WaypointCreatorGen2
             if (CurrentWaypoints != null)
             {
                 int count = 0;
+
                 foreach (WaypointInfo wpInfo in CurrentWaypoints)
                 {
                     int splineCount = 0;
@@ -308,10 +310,14 @@ namespace WaypointCreatorGen2
 
         private void EditorListBox_SelectedValueChanged(object sender, EventArgs e)
         {
-            if (EditorListBox.SelectedIndex == -1)
+            if (EditorListBox.SelectedIndex == -1 || EditorListBox.SelectedItem == null)
                 return;
 
-            string[] words = EditorListBox.SelectedItem.ToString().Replace("(", "").Replace(")", "").Split(new[] { ' ' });
+            string str = EditorListBox.SelectedItem.ToString();
+            if (string.IsNullOrEmpty(str))
+                return;
+
+            string[] words = str.Replace("(", "").Replace(")", "").Split([' ']);
 
             uint creatureId = uint.Parse(words[0]);
             ulong lowGuid = ulong.Parse(words[1]);
@@ -325,7 +331,7 @@ namespace WaypointCreatorGen2
 
         private void RemoveDuplicates_Click(object sender, EventArgs e)
         {
-            List<WaypointInfo> waypoints = new();
+            List<WaypointInfo> waypoints = [];
 
             foreach (WaypointInfo waypoint in CurrentWaypoints)
             {
@@ -353,6 +359,7 @@ namespace WaypointCreatorGen2
                 foreach (WaypointInfo wp in CurrentWaypoints)
                 {
                     WaypointInfo nextWaypoint;
+
                     try
                     {
                         nextWaypoint = CurrentWaypoints[CurrentWaypoints.IndexOf(wp) + 1];
@@ -380,7 +387,7 @@ namespace WaypointCreatorGen2
             if (EditorGridView.SelectedRows.Count == 0)
                 return;
 
-            CopiedWaypoints = new();
+            CopiedWaypoints = [];
 
             for (int i = 0; i < EditorGridView.SelectedRows.Count; i++)
             {
@@ -404,7 +411,7 @@ namespace WaypointCreatorGen2
             if (CopiedWaypoints == null || CopiedWaypoints.Count == 0 || EditorGridView.SelectedRows.Count == 0)
                 return;
 
-            int index = aboveSelection ? EditorGridView.SelectedRows[0].Index : EditorGridView.SelectedRows[EditorGridView.SelectedRows.Count - 1].Index + 1;
+            int index = aboveSelection ? EditorGridView.SelectedRows[0].Index : EditorGridView.SelectedRows[^1].Index + 1;
             CurrentWaypoints.InsertRange(index, CopiedWaypoints);
 
             ShowWaypointDatas();
@@ -426,6 +433,7 @@ namespace WaypointCreatorGen2
             SQLOutputTextBox.AppendText("INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `delay`, `move_type`, `velocity`) VALUES" + Environment.NewLine);
 
             int rowCount = 0;
+
             foreach (DataGridViewRow row in EditorGridView.Rows)
             {
                 ++rowCount;
@@ -457,9 +465,9 @@ namespace WaypointCreatorGen2
         private void SQLOutputSaveButton_Click(object sender, EventArgs e)
         {
             // Saving the text of the SQLOutputTextBox into a file
-            SaveFileDialog dialog = new SaveFileDialog
+            SaveFileDialog dialog = new()
             {
-                Filter = "Structured Query Language (*.sql)|*.sql|All files (*.*)|*.*",
+                Filter = @"Structured Query Language (*.sql)|*.sql|All files (*.*)|*.*",
                 FilterIndex = 1,
                 DefaultExt = "sql",
                 RestoreDirectory = true
@@ -489,7 +497,7 @@ namespace WaypointCreatorGen2
             if (EditorGridView.SelectedRows.Count == 0)
                 return;
 
-            List<int> indexesToRemove = new();
+            List<int> indexesToRemove = [];
 
             foreach (DataGridViewRow row in EditorGridView.SelectedRows)
                 indexesToRemove.Add(row.Index);
@@ -510,7 +518,7 @@ namespace WaypointCreatorGen2
         public WaypointPosition Position = new();
         public uint MoveTime;
         public int Delay;
-        public List<SplinePosition> SplineList = new();
+        public List<SplinePosition> SplineList = [];
 
         public bool HasOrientation()
         {
