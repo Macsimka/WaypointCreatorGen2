@@ -427,7 +427,7 @@ namespace WaypointCreatorGen2
             SQLOutputTextBox.AppendText("UPDATE `creature` SET `spawndist` = 0, `MovementType` = 2 WHERE `guid` = @WPGUID;" + Environment.NewLine);
 
             // creature_addon
-            SQLOutputTextBox.AppendText("REPLACE INTO `creature_addon` (`guid`, `waypointPathId`, `bytes2`) VALUES (@WPGUID, @PATH, 1);" + Environment.NewLine);
+            SQLOutputTextBox.AppendText("REPLACE INTO `creature_addon` (`guid`, `waypointPathId`) VALUES (@WPGUID, @PATH);" + Environment.NewLine);
 
             SQLOutputTextBox.AppendText("DELETE FROM `waypoint_data` WHERE `id`= @PATH;" + Environment.NewLine);
             SQLOutputTextBox.AppendText("INSERT INTO `waypoint_data` (`id`, `point`, `position_x`, `position_y`, `position_z`, `orientation`, `delay`, `move_type`, `velocity`) VALUES" + Environment.NewLine);
