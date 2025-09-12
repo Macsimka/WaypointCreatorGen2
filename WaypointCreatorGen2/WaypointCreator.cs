@@ -11,11 +11,10 @@ namespace WaypointCreatorGen2
     public partial class WaypointCreator : Form
     {
         // Dictionary<UInt32 /*CreatureID*/, Dictionary<UInt64 /*lowGUID*/, List<WaypointInfo>>>
-        private SortedDictionary<uint, Dictionary<ulong, List<WaypointInfo>>> WaypointDatabyCreatureEntry = new();
+        private SortedDictionary<uint, Dictionary<ulong, List<WaypointInfo>>> WaypointDatabyCreatureEntry = [];
 
         private List<WaypointInfo> CopiedWaypoints;
         private List<WaypointInfo> CurrentWaypoints;
-
 
         public WaypointCreator()
         {
@@ -78,7 +77,7 @@ namespace WaypointCreatorGen2
                         {
                             if (packetHeader[i].Contains("Time:"))
                             {
-                                wpInfo.TimeStamp = uint.Parse(TimeSpan.Parse(packetHeader[i + 2]).TotalMilliseconds.ToString());
+                                wpInfo.TimeStamp = uint.Parse(TimeSpan.Parse(packetHeader[i + 2]).TotalMilliseconds.ToString(CultureInfo.InvariantCulture));
                                 break;
                             }
                         }
@@ -117,7 +116,7 @@ namespace WaypointCreatorGen2
                             }
 
                             // Extract Facing Angles
-                            if (line.Contains("FaceDirection:"))
+                            if (line.Contains(" FaceDirection:"))
                             {
                                 string[] words = line.Split([' ']);
                                 for (int i = 0; i < words.Length; ++i)
