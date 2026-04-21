@@ -146,7 +146,7 @@ namespace WaypointCreatorGen2
                                         int index = result[creatureId][lowGuid].Count - 1;
                                         long timeDiff = wpInfo.TimeStamp - result[creatureId][lowGuid][index].TimeStamp;
                                         uint oldMoveTime = result[creatureId][lowGuid][index].MoveTime;
-                                        result[creatureId][lowGuid][index].Delay = Convert.ToInt32(timeDiff - oldMoveTime);
+                                        result[creatureId][lowGuid][index].Delay = Convert.ToInt64(timeDiff - oldMoveTime);
                                     }
                                 }
 
@@ -516,7 +516,7 @@ namespace WaypointCreatorGen2
         public uint TimeStamp;
         public WaypointPosition Position = new();
         public uint MoveTime;
-        public int Delay;
+        public long Delay;
         public List<SplinePosition> SplineList = [];
 
         public bool HasOrientation()
